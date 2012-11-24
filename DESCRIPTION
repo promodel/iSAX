@@ -1,0 +1,9 @@
+Package: iSAXr
+Type: Package
+Title: What the package does (short line)
+Version: 0.0-0
+Date: 2012-11-13
+Author: Anatoly Sorokin
+Maintainer: Anatoly Sorokin <lptolik@gmail.com>
+Description: More about what it does (maybe more than one line)
+License: GPL(>=2)
