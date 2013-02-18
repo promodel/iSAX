@@ -93,19 +93,20 @@ hSAX<-function(
 ### convert signal into hSAX string  
   ts,##<< signal 
   wl=16,##<< desired length of the string representation
-  win=length(ts)##<< sliding window length. Signal will be represented as set of length(ts)-win+1 strings of wl characters each.
+  win=length(ts),##<< sliding window length. Signal will be represented as set of length(ts)-win+1 strings of wl characters each.
+  verbose=FALSE##<< if TRUE print progress indicator
   ){
-  sig<-.aSAX(ts,alphasize=16,wl=wl,win=win,alphabet=c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'))
+  sig<-.aSAX(ts,alphasize=16,wl=wl,win=win,alphabet=c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'),verbose)
   return(sig);
 }
 
-.aSAX<-function(ts,alphasize=4,wl=16,win=48,alphabet){
+.aSAX<-function(ts,alphasize=4,wl=16,win=48,alphabet,verbose=FALSE){
 	bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
 	l<-length(ts)-win+1;
 	sig=rep('',l);
 	c(l,1)->dim(sig)
 	for(i in 1:l){
-		if(i%%100==0) {print(i)}
+		if(verbose&i%%100==0) {print(i)}
 		paa <- getPAA(ts[i:(i+win-1)],wl);
 		sig[i,] <- paste(cut(paa,bp,labels=alphabet),collapse='');
 	}
