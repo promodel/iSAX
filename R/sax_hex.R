@@ -11,9 +11,7 @@ getPAA <- function(
 	  paa<-ts.n;
 	  dim(paa)<-c(l/wl,wl);
 	}else{
-	  paa<-rep(ts.n,wl);
-	  dim(paa)<-c(l,wl);
-	  paa<-t(paa);
+	  paa<-rep(ts.n,each=wl);
 	  dim(paa)<-c(l,wl);
 	}
 	paa<-apply(paa,2,mean);
