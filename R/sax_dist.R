@@ -51,6 +51,9 @@ hashSAX<-function(cp,##<< signal
   win=length(ts),##<< sliding window length. Signal will be represented as set of length(ts)-win+1 strings of wl characters each.
   verbose=FALSE##<< if TRUE print progress indicator
   ){
+	if(!require(futile.logger)){
+		stop('you need to install "futile.logger" library')
+	}
 	alphasize<-16
 	md<- .minDist(alphasize);
 	saxhash<-list()
@@ -58,7 +61,9 @@ hashSAX<-function(cp,##<< signal
 	lastS<-hSAX(cp[1:win],wl,win)[1,1]
 	lastR<-1
 	len<- -1
+	rli<-1
 	l<-length(cp)-win
+	ranlist[l,]<-list(NA,NA,NA)
 	for(i in 1:l){
 	 wp<-cp[i:(i+win-1)]
 	 h<-hSAX(wp,wl,win)[1,1]
@@ -71,7 +76,8 @@ hashSAX<-function(cp,##<< signal
 	  len<-len+1
 	  }else{
 	   if(len>0){
-		ranlist[dim(ranlist)[1]+1,]<-list(lastR,lastS,len)
+		ranlist[rli,]<-list(lastR,lastS,len)
+		rli<-rli+1
 	   }
 	   lastR<-i
 	   lastS<-h
@@ -81,7 +87,7 @@ hashSAX<-function(cp,##<< signal
 	   cat(paste(i,'\n'))
 	  }
 	 }
-	ret<-list(sax=saxhash,run=ranlist)
+	ret<-list(sax=saxhash,run=ranlist[1:rli-1,])
 	class(ret)<-'saxhash'
 	return(ret)
 }

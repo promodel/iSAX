@@ -5,6 +5,9 @@ getPAA <- function(
   wl=16 ##<< number of symbols. After conversion time series will be wl in length.
   ){
 	ts.n<-unlist(ts)
+	if(class(ts.n)!='numeric'){
+		stop(paste(ts,'\n not a numeric data'))
+	}
 	ts.n <- (ts.n-mean(ts.n))/sd(ts.n);
 	l<-length(ts.n);
 	if(l%%wl==0){
