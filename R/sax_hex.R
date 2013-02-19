@@ -50,7 +50,7 @@ cSAX <- function(
 SAX.int <- function(
   ### Converts time series into SAX representation and return character string where SAX symbols mapped into integer levels
   ts,##<< time series to be analyzed
-  alphasize=4,##<< alphabet cardinality, number of levels time series will be split on
+  alphasize=4,##<< alphabet cardinality, number of bits time series will be coded with
   wl=16,##<< number of symbols. After conversion sliding window of the time series will be wl in length.
   win=length(ts)##<< window size. Time series will be converted into set of (l-win+1) strings 
 ){
