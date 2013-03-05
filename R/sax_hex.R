@@ -93,7 +93,7 @@ SAX.int <- function(
   return(base)
 }
 
-.SAX <- function(ts,wl=16,win=48){
+.SAX <- function(ts,wl=16,win=48,base){
 	l<-length(ts)-win+1;
 	sig=rep('',l);
 	c(l,1)->dim(sig)
@@ -110,8 +110,9 @@ SAX.int <- function(
 hSAXbase<-function(
 ### define basic properties of hexSAX string:
 ### size of the alphabet, alphabet itself  and break points for convertison
+  alphasize=16##<< size of the alphabet, should be less then 16
   ){
-  alphasize<-16
+  if(alphasize>16) stop('size of the alphabet could not be larger then 16')
   alphabet <- ordered(c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'),levels=c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'));
   bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
   

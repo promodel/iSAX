@@ -21,31 +21,31 @@ hsaxDist<-function(
 ### distance between two hSAX strings  
   x,##<< first string
   y,##<< second string
-  alphasize=16,##<< expected alphabet size
+  base=hSAXbase(),##<< SAXbase object
   md##<< dissimilarity matrix for SAX alphabet
   ){
   if(class(x)=="character"){
-    xi<-hSAX2int(x)
+    xi<-hSAX2int(x,base)
   }else if(class(x)=="integer"){
     xi<-x
     if(min(xi)<1|max(xi)>16){
-      stop(paste('X suppose to be in range [1,',alphasize,']'))
+      stop(paste('X suppose to be in range [1,',base$alphasize,']'))
     }
   }else{
     stop('X suppose to be either string or vector of integers')
   }
   if(class(y)=="character"){
-    yi<-hSAX2int(y)
+    yi<-hSAX2int(y,base)
   }else if(class(y)=="integer"){
     yi<-y
     if(min(yi)<1|max(yi)>16){
-      stop(paste('Y suppose to be in range [1,',alphasize,']'))
+      stop(paste('Y suppose to be in range [1,',base$alphasize,']'))
     }
   }else {
     stop('Y suppose to be either string or vector of integers')
   }
   minDistFun<-function(.x)md[.x[1],.x[2]];
-  if(missing(md)) md<- minDist(alphasize);
+  if(missing(md)) md<- minDist(base$alphasize);
   if(dim(xi)[2]==1&dim(yi)[2]==1){
     dist<-sqrt(sum(apply(rbind(as.vector(xi), as.vector(yi)),2,minDistFun)^2))
   }else{
