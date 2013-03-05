@@ -44,8 +44,18 @@ hsaxDist<-function(
   }else {
     stop('Y suppose to be either string or vector of integers')
   }
-  if(missing(md)) md<- .minDist(alphasize);
-    dist<-sqrt(sum(apply(rbind(xi,yi),2,function(.x)md[.x[1],.x[2]])^2))
+  minDistFun<-function(.x)md[.x[1],.x[2]];
+  if(missing(md)) md<- minDist(alphasize);
+  if(dim(xi)[2]==1&dim(yi)[2]==1){
+    dist<-sqrt(sum(apply(rbind(as.vector(xi), as.vector(yi)),2,minDistFun)^2))
+  }else{
+    dist<-matrix(nrow=dim(xi)[2],ncol=dim(yi)[2])
+    for(i in 1:dim(xi)[2]){
+      for(j in 1:dim(yi)[2]){
+        dist[i,j]<-sqrt(sum(apply(rbind(as.vector(xi[,i]), as.vector(yi[,j])),2,minDistFun)^2))
+      }
+    }
+  }
   return(dist)
 }
 
