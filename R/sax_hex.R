@@ -27,11 +27,16 @@ cSAX <- function(
   ts,##<< time series to be analyzed
   alphasize=4,##<< alphabet cardinality, number of levels time series will be split on
   wl=16,##<< number of symbols. After conversion sliding window of the time series will be wl in length.
-  win=length(ts)##<< window size. Time series will be converted into set of (l-win+1) strings 
-  ){
-	letters <- c( "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
-	alphabet <- ordered(letters[1:alphasize],levels=letters[1:alphasize]);
-	bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+  win=length(ts),##<< window size. Time series will be converted into set of (l-win+1) strings 
+  base##<< SAXbase object
+){
+  if(missing(base)) base<-.SAXbase(alphasize)
+  if(base$alphasize!=alphasize) base<-.SAXbase(alphasize)
+  ### alphasize value overwrites base value if base$alphasize do not correspond to alphasize provided
+  bp <- base$bp;
+  alphabet <-base$alphabet
+#	alphabet <- ordered(letters[1:alphasize],levels=letters[1:alphasize]);
+#	bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
 	l<-length(ts);
 	i1=rep(1:(l-win+1),win);
 	c(l-win+1,win)->dim(i1);
@@ -55,9 +60,13 @@ SAX.int <- function(
   ts,##<< time series to be analyzed
   alphasize=4,##<< alphabet cardinality, number of bits time series will be coded with
   wl=16,##<< number of symbols. After conversion sliding window of the time series will be wl in length.
-  win=length(ts)##<< window size. Time series will be converted into set of (l-win+1) strings 
+  win=length(ts),##<< window size. Time series will be converted into set of (l-win+1) strings 
+  base##<< SAXbase object
 ){
-	bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+  if(missing(base)) base<-.SAXbase(alphasize)
+  if(base$alphasize!=alphasize) base<-.SAXbase(alphasize)
+### alphasize value overwrites base value if base$alphasize do not correspond to alphasize provided
+  bp <- base$bp;
 	l<-length(ts);
 	i1=rep(1:(l-win+1),win);
 	c(l-win+1,win)->dim(i1);
@@ -75,13 +84,21 @@ SAX.int <- function(
 ### integer representation of SAX signal
 }
 
-.SAX <- function(ts,alphasize=4,wl=16,win=48){
-	letters <- c( "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
-	alphabet <- ordered(letters[1:alphasize],levels=letters[1:alphasize]);
-	bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+.SAXbase<-function(alphasize=4){
+  letters <- c( "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
+  alphabet <- ordered(letters[1:alphasize],levels=letters[1:alphasize]);
+  bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+  base<-list(alphasize=alphasize,alphabet=alphabet,bp=bp)
+  class(base)<-'SAXbase'
+  return(base)
+}
+
+.SAX <- function(ts,wl=16,win=48){
 	l<-length(ts)-win+1;
 	sig=rep('',l);
 	c(l,1)->dim(sig)
+  alphabet<-base$alphabet
+  bp<-base$bp
 	for(i in 1:l){
 	if(i%%100==0) {print(i)}
 	paa <- getPAA(ts[i:(i+win-1)],wl);
@@ -90,19 +107,35 @@ SAX.int <- function(
 	return(sig);
 }
 
+hSAXbase<-function(
+### define basic properties of hexSAX string:
+### size of the alphabet, alphabet itself  and break points for convertison
+  ){
+  alphasize<-16
+  alphabet <- ordered(c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'),levels=c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'));
+  bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+  
+  base<-list(alphasize=alphasize,alphabet=alphabet,bp=bp)
+  class(base)<-'SAXbase'
+  return(base)
+}
+
+
 hSAX<-function(
 ### convert signal into hSAX string  
   ts,##<< signal 
   wl=16,##<< desired length of the string representation
   win=length(ts),##<< sliding window length. Signal will be represented as set of length(ts)-win+1 strings of wl characters each.
-  verbose=FALSE##<< if TRUE print progress indicator
+  base##<< SAXbase object to speeed up calculations.
   ){
-  sig<-.aSAX(ts,alphasize=16,wl=wl,win=win,alphabet=c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'))
+  if(missing(base)) base<-hSAXbase()
+  sig<-.aSAX(ts,wl=wl,win=win,base)
   return(sig);
 }
 
-.aSAX<-function(ts,alphasize=4,wl=16,win=48,alphabet){
-	bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+.aSAX<-function(ts,wl=16,win=48,base){
+	bp <- base$bp;#c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+	alphabet<-base$alphabet;
 	l<-length(ts)-win+1;
 	sig=rep('',l);
 	c(l,1)->dim(sig)
@@ -114,14 +147,14 @@ hSAX<-function(
 	return(sig);
 }
 
-.cSAX2int<-function(sig,alphasize=4){
-	letters <- c( "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
-	alphabet <- ordered(letters[1:alphasize],levels=letters[1:alphasize]);
-	bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+.cSAX2int<-function(sig,base){#,alphasize=4){
+#	letters <- c( "a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z");
+#	alphabet <- ordered(letters[1:alphasize],levels=letters[1:alphasize]);
+#	bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
 	ns<-length(sig)
 	l<-nchar(sig[1])
 	c<-strsplit(sig,'')
-	match(unlist(c),alphabet)->ic
+	match(unlist(c),base$alphabet)->ic
 	dim(ic)<-c(l,ns)
 	return(t(ic))
 	
@@ -129,39 +162,45 @@ hSAX<-function(
 
 hSAX2int<-function(
 ### convert the hSAX string into vector of integers  
-  str##<< hSAX string
+  str,##<< hSAX string
+  base##<< object of class 'SAXbase', optional 
   ){
-  alphasize<-16
-  alphabet <- ordered(c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'),levels=c('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'));
-  bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
+  if(missing(base)|class(base)!='SAXbase'){
+    base<-hSAXbase
+  }
+#  alphasize<-base$alphasize
+#  alphabet <- base$alphabet
+#  bp <- base$bp
   ns<-length(str)
   l<-nchar(str[1])
   c<-strsplit(str,'')
-  match(unlist(c),alphabet)->ic
+  match(unlist(c),base$alphabet)->ic
   dim(ic)<-c(l,ns)
   return((ic))
   
 }
 
-.cSAX2double<-function(str,alphasize=4){
+.cSAX2double<-function(str,base){
   ns<-length(str)
   l<-nchar(str[1])
-  is<-.cSAX2int(str,alphasize);
-  bp <- qnorm(1:(alphasize)/(alphasize+1));
-  ds<-bp[is]
+  is<-.cSAX2int(str,base);
+  bp <- qnorm(1:(base$alphasize)/(base$alphasize+1));
+  ds<-base$bp[is]
   
 }
 
 hSAX2double<-function(
 ### convert the hSAX string into vector of doubles  
-  str##<< hSAX string
-  ){
-  alphasize=16
+  str,##<< hSAX string
+  base##<< object of class 'SAXbase', optional 
+){
+  if(missing(base)|class(base)!='SAXbase'){
+    base<-hSAXbase
+  }
   ns<-length(str)
   l<-nchar(str[1])
   is<-hSAX2int(str);
-  bp <- qnorm(1:(alphasize)/(alphasize+1));
-  ds<-bp[is]
+  ds<-base$bp[is]
 }
 
 hSAX2signal<-function(
