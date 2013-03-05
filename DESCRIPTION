@@ -7,3 +7,5 @@ Author: Anatoly Sorokin
 Maintainer: Anatoly Sorokin <lptolik@gmail.com>
 Description: More about what it does (maybe more than one line)
 License: GPL(>=2)
+Depends: testthat
+Suggests: 
