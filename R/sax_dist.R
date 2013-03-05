@@ -1,4 +1,7 @@
-.minDist<-function(alphasize){
+minDist<-function(
+  ### calculates dissimilarity matrix for SAX alphabet 
+  alphasize##<< size of the alphabet
+){
   md<-matrix(0,ncol=alphasize,nrow=alphasize);
   bp <- c(-Inf,qnorm(1:(alphasize-1)/alphasize),Inf);
   for(i in 1:alphasize){
@@ -55,7 +58,7 @@ hashSAX<-function(cp,##<< signal
 		stop('you need to install "futile.logger" library')
 	}
 	alphasize<-16
-	md<- .minDist(alphasize);
+	md<- minDist(alphasize);
 	saxhash<-list()
 	ranlist<-data.frame(i=1,sax='sax',len=1,stringsAsFactors=FALSE)[FALSE,]
 	lastS<-hSAX(cp[1:win],wl,win)[1,1]
