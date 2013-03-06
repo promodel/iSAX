@@ -166,8 +166,9 @@ hSAX2int<-function(
   str,##<< hSAX string
   base##<< object of class 'SAXbase', optional 
   ){
-  if(missing(base)|class(base)!='SAXbase'){
-    base<-hSAXbase
+  if(missing(base)) base<-hSAXbase()
+  if(class(base)!='SAXbase'){
+    stop('base should be of class "SAXbase"')
   }
 #  alphasize<-base$alphasize
 #  alphabet <- base$alphabet
@@ -195,12 +196,13 @@ hSAX2double<-function(
   str,##<< hSAX string
   base##<< object of class 'SAXbase', optional 
 ){
-  if(missing(base)|class(base)!='SAXbase'){
-    base<-hSAXbase
+  if(missing(base)) base<-hSAXbase()
+  if(class(base)!='SAXbase'){
+    stop('base should be of class "SAXbase"')
   }
   ns<-length(str)
   l<-nchar(str[1])
-  is<-hSAX2int(str);
+  is<-hSAX2int(str,base=base);
   ds<-base$bp[is]
 }
 
