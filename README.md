@@ -1,7 +1,7 @@
 iSAX
 ====
 
-Several versions of the code for Symbolic Aggregate approXimation and indexing. At the moment the R implementation only.
+Several versions of the code for Symbolic Aggregate ApproXimation and indeXing. At the moment the R implementation only.
 
 ##Build
 
