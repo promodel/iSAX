@@ -29,20 +29,20 @@ hsaxDist<-function(
   }else if(class(x)=="integer"){
     xi<-x
     if(min(xi)<1|max(xi)>16){
-      stop(paste('X suppose to be in range [1,',base$alphasize,']'))
+      stop(paste('X is supposed to be in range [1,',base$alphasize,']'))
     }
   }else{
-    stop('X suppose to be either string or vector of integers')
+    stop('X is supposed to be either string or vector of integers')
   }
   if(class(y)=="character"){
     yi<-hSAX2int(y,base)
   }else if(class(y)=="integer"){
     yi<-y
     if(min(yi)<1|max(yi)>16){
-      stop(paste('Y suppose to be in range [1,',base$alphasize,']'))
+      stop(paste('Y is supposed to be in range [1,',base$alphasize,']'))
     }
   }else {
-    stop('Y suppose to be either string or vector of integers')
+    stop('Y is supposed to be either string or vector of integers')
   }
   minDistFun<-function(.x)md[.x[1],.x[2]];
   if(missing(md)) md<- minDist(base$alphasize);

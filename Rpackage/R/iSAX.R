@@ -14,11 +14,11 @@ iSAX<-function(
     stop(paste('Card "',card,'" is not coercable to the integer'))
   }
   if(card!=as.integer(card)){
-    warning(sprintf('There is wrong value for card="%f", card suppose to be an integer in a range (0,8]\n card value is set to %d',card,as.integer(card)))
+    warning(sprintf('There is a wrong value for card="%f", card supposed to be an integer in a range (0,8]\n card value is set to %d',card,as.integer(card)))
   }
   card<-as.integer(card)
   if(card<=0|card>8){
-    warning(sprintf('There is wrong value for card="%d", card suppose to be an integer in a range (0,8]\n card value is set to 4',card))
+    warning(sprintf('There is a wrong value for card="%d", card supposed to be an integer in a range (0,8]\n card value is set to 4',card))
     card<-4
   }
   if(missing(base)) base<-iSAXbase(card)
@@ -59,7 +59,7 @@ int2iSAX<-function(
   if(!any('iSAXbase'==class(base))) base<-iSAXbase(card)
   if(base$alphasize!=2^card) base<-iSAXbase(card)
   if(min(as.vector(sig))<0 | max(as.vector(sig))>=2^card){
-    stop(sprintf('sig suppose to be a value in a range [0,%d]\n value in a range [%d,%d] provided.',
+    stop(sprintf('sig supposed to be a value in a range [0,%d]\n value in a range [%d,%d] provided.',
                  2^card-1,min(as.vector(sig)),max(as.vector(sig))))
   }
   if(class(sig)=='list'){
